@@ -15,7 +15,7 @@ int main(int argc, string argv[])
         printf("Usage : ./substitution key");
         return 1;
     }
-    // Assign the argument value to key variable.
+
     string key = argv[1];
     int keyLength = strlen(key);
 
