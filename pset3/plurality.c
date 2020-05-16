@@ -2,11 +2,12 @@
 #include <cs50.h>
 #include <string.h>
 
-// Max candidates 
+// Max candidates
 #define MAX 9
 
 // Candidate type
-typedef struct{
+typedef struct
+{
     string name;
     int votes;
 }
@@ -16,7 +17,7 @@ candidate;
 candidate candidates[MAX];
 
 // Number of candidates
-int candidateCount;
+int candidate_count;
 
 // Prototypes
 bool vote(string name);
@@ -31,17 +32,17 @@ int main(int argc, string argv[])
         return 1;
     }
 
-    candidateCount = argc - 1;
+    candidate_count = argc - 1;
 
     // Check if the candidates count more than the max value.
-    if (candidateCount > MAX)
+    if (candidate_count > MAX)
     {
         printf("Maximum number of candidates is %i\n", MAX);
         return 1;
     }
 
     // Fill candidates data in the candidates array.
-    for (int i = 0; i < candidateCount; i++)
+    for (int i = 0; i < candidate_count; i++)
     {
         candidates[i].votes = 0;
         candidates[i].name = argv[i + 1];
@@ -58,7 +59,7 @@ int main(int argc, string argv[])
         // Check invalid votes.
         if (!vote(name))
         {
-             printf("Invalid vote.\n");
+            printf("Invalid vote.\n");
         }
     }
 
@@ -69,7 +70,7 @@ int main(int argc, string argv[])
 
 bool vote(string name)
 {
-    for (int i = 0; i < candidateCount; i++)
+    for (int i = 0; i < candidate_count; i++)
     {
 
         // Check if the name matches any of candidates.
@@ -89,7 +90,7 @@ void print_winner(void)
     int tempVotes = 0;
 
     // Store the the highest votes.
-    for (int i = 0; i < candidateCount; i++)
+    for (int i = 0; i < candidate_count; i++)
     {
         if (candidates[i].votes >= tempVotes)
         {
@@ -98,7 +99,7 @@ void print_winner(void)
     }
 
     // Matching the candidates votes count with the highest votes and print all matches.
-    for (int i = 0; i < candidateCount; i++)
+    for (int i = 0; i < candidate_count; i++)
     {
         if (candidates[i].votes == tempVotes)
         {
