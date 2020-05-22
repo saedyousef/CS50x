@@ -36,6 +36,14 @@ int pair_count = 0;
 // Candidates count.
 int candidate_count;
 
+
+// Functions prototypes.
+bool vote(int rank, string name, int ranks[]);
+void record_preferences(int ranks[]);
+void add_pair(void);
+void lock_pair(void);
+void print_winner(void);
+
 // Main.
 int  main(int argc, string argv[])
 {
@@ -116,4 +124,94 @@ int  main(int argc, string argv[])
 
     // Means the main function executed with 0 errors.
     return 0;
+}
+
+// Update the rank for each new vote.
+bool vote(int rank, string name, int ranks[])
+{
+    // Update ranks
+    for (int i = 0; i < candidate_count; i++)
+    {
+        // Check if the candidate is exists.
+        if (strcmp(name, candidates[i]) == 0)
+        {
+            ranks[rank] = i;
+            return true;
+        }
+    }
+
+    // No candidates found, don't update anything and return false.
+    return false;
+}
+
+
+// Update the preferences voter's rank after one vote.
+void record_preferences(int ranks[])
+{
+    // The prefered candidate.
+    for (int i = 0; i < candidate_count; i++)
+    {
+        // The candidate prefered over.
+        for (int j = i + 1; j < candidate_count; j++)
+        {
+            preferences[ranks[i]][ranks[j]]++;
+        }
+    }
+}
+
+// Adding pairs where a candidates is prefered over another candidate.
+void add_pair(void)
+{
+    // Loop through candidates and specify the winner and loser for each pair.
+    for (int i = 0; i < candidate_count; i++)
+    {
+        // We need another loop to get the prefered over candidate and compare with the cadidates[i].
+        // Starts with the second candidate to the one we are looping on.
+        for (int j = i + 1; j < candidate_count; j++)
+        {
+            if (preferences[i][j] > preferences[j][i])
+            {
+                pairs[pair_count].winner = i;
+                pairs[pair_count].loser = j;
+                pair_count++;
+            }
+            else
+            {
+                pairs[pair_count].winner = j;
+                pairs[pair_count].loser = i;
+                pair_count++;
+            }
+        }
+    }
+}
+
+
+// Sorting pairs
+void sort_pairs(void)
+{
+    // If u want, try to implement a sorting algorithm like "Merge Sort" and use it.
+    // I've already has that done in another language, so I'm just going to use qsort function.
+    // Check this https://www.codingunit.com/c-reference-stdlib-h-function-qsort .
+    qsort(pairs, pair_count, sizeof(pair), comparator);
+}
+
+// Comparing function, in order to sort pairs with qsort(Already implemented in stdlib).
+// check https://www.geeksforgeeks.org/comparator-function-of-qsort-in-c/ for more details.
+int comparator(const void *p, const void *q)  
+{ 
+    // Decalraing two pointer of pair.
+    pair *pointer1 = (pair *)p;
+    pair *pointer2 = (pair *)q;
+     
+    int value = preferences[pointer2->winner][pointer2->loser] - preferences[pointer1->winner][pointer1->loser];
+}
+
+void lock_pairs(void)
+{
+    // TODO
+}
+
+void print_winner(void)
+{
+    // TODO
 }
