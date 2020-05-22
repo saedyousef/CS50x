@@ -19,7 +19,7 @@ pair;
 int preferences[MAX][MAX];
 
 // Pairs array to store the each pair in the elecetion.
-pair pairs[MAX * (MAX -1) / 2];
+pair pairs[MAX * (MAX - 1) / 2];
 
 // Array of candidates.
 string candidates[MAX];
@@ -27,11 +27,8 @@ string candidates[MAX];
 // Locked pairs.
 bool locked[MAX][MAX];
 
-// Lock attribute.
-bool lock = true;
-
 // Pairs count.
-int pair_count = 0;
+int pair_count;
 
 // Candidates count.
 int candidate_count;
@@ -40,10 +37,11 @@ int candidate_count;
 // Functions prototypes.
 bool vote(int rank, string name, int ranks[]);
 void record_preferences(int ranks[]);
-void add_pair(void);
-void lock_pair(void);
+void add_pairs(void);
+void lock_pairs(void);
+void sort_pairs(void);
 void print_winner(void);
-
+int comparator(const void *p, const void *q);
 // Main.
 int  main(int argc, string argv[])
 {
@@ -105,7 +103,7 @@ int  main(int argc, string argv[])
                 printf("Invalid vote.\n");
 
                 // Return 3 so we can chase it in debugging.
-                return 3;
+                return 0;
             }
         }
 
@@ -160,8 +158,9 @@ void record_preferences(int ranks[])
 }
 
 // Adding pairs where a candidates is prefered over another candidate.
-void add_pair(void)
+void add_pairs(void)
 {
+    pair_count = 0;
     // Loop through candidates and specify the winner and loser for each pair.
     for (int i = 0; i < candidate_count; i++)
     {
@@ -175,7 +174,7 @@ void add_pair(void)
                 pairs[pair_count].loser = j;
                 pair_count++;
             }
-            else
+            else if (preferences[i][j] < preferences[j][i])
             {
                 pairs[pair_count].winner = j;
                 pairs[pair_count].loser = i;
@@ -197,21 +196,63 @@ void sort_pairs(void)
 
 // Comparing function, in order to sort pairs with qsort(Already implemented in stdlib).
 // check https://www.geeksforgeeks.org/comparator-function-of-qsort-in-c/ for more details.
-int comparator(const void *p, const void *q)  
-{ 
+int comparator(const void *p, const void *q)
+{
     // Decalraing two pointer of pair.
     pair *pointer1 = (pair *)p;
     pair *pointer2 = (pair *)q;
-     
+
     int value = preferences[pointer2->winner][pointer2->loser] - preferences[pointer1->winner][pointer1->loser];
+
+    return value;
 }
 
 void lock_pairs(void)
 {
-    // TODO
+    // Intialize the first locked pairs.
+    if (pair_count > 0)
+    {
+        locked[pairs[0].winner][pairs[0].loser] = true;
+    }
+
+    // Starts with the second index, cause the first index already locked.
+    for (int i = 1; i < pair_count; i++)
+    {
+        bool cycle = false;
+        for (int j = 0; j < pair_count; j++)
+        {
+            if (locked[pairs[i].loser][j])
+            {
+                cycle = true;
+                break;
+            }
+        }
+
+        if (!cycle)
+        {
+            locked[pairs[i].winner][pairs[i].loser] = true;
+        }
+    }
 }
 
 void print_winner(void)
 {
-    // TODO
+    int votes = 0;
+
+    for (int i = 0; i < candidate_count; i++)
+    {
+        for (int k = 0; k < candidate_count; k++)
+        {
+            if (locked[k][i] == false)
+            {
+                votes++;
+            }
+        }
+
+        // Print all source graph candidates.
+        if (votes == candidate_count)
+        {
+            printf("%s\n", candidates[i]);
+        }
+    }
 }
