@@ -32,7 +32,7 @@ int main(void)
         for (int hashes = 0; hashes <= rows; hashes++)
             printf("#");
 
-        // Insert new line.
+        // Print a new line.
         printf("\n");
     }        
 }
